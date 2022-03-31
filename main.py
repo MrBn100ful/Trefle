@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from pymongo import MongoClient
+import time
 
 
 #Structures de données
 class Message(BaseModel):
     id : int
+    time : int
+    file : str
     message: str
 
 
@@ -26,7 +29,17 @@ def insert_thread(thread: Thread):
     collection.insert_one({"thread_id": thread.thread_id, "list": list_messages })
 
 def insert_message(thread_id: int ,message: Message):
-    collection.update_one({"thread_id": thread_id}, {"$push": {"list": {"id": message.id, "message": message.message}}})
+    if thread_length(thread_id) == 0:
+        collection.update_one({"thread_id": thread_id}, {"$push": {"list": {"id": 0,"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
+    else:
+        collection.update_one({"thread_id": thread_id}, {"$push": {"list": {"id": thread_length(thread_id) + 1,"time": int(time.time()),"file":message.file, "message": message.message}}})
+
+def thread_length(id: int):
+    thread = collection.find_one({"thread_id": id})
+    if thread is None:
+        return 0
+    else:
+        return len(thread["list"])
 
 #insert_thread(Thread(thread_id=3, list_messages=[Message(id=0, message="Hello"), Message(id=1, message="World")]))
 
