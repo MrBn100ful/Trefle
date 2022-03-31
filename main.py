@@ -69,6 +69,11 @@ def get_message(id: int, message_id: int):
             i += 1
         return {"message": "Message not found"}
 
+@app.post("/thread/create")
+def create_thread(thread: Thread):
+    insert_thread(thread)
+    return {"message": "Thread created"}
+
 @app.post("/thread/{id}/message")
 def post_message(id: int, message: Message):
     insert_message(id, message)
