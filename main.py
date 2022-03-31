@@ -23,16 +23,15 @@ collection = db.test_collection
 
 # Partie insertion bdd
 def insert_thread(thread: Thread):
-    list_messages = []
+    collection.insert_one({"thread_id": thread.thread_id, "list": {} })
     for message in thread.list_messages:
-        list_messages.append({"id": message.id, "message": message.message})
-    collection.insert_one({"thread_id": thread.thread_id, "list": list_messages })
+        insert_message(thread.thread_id, message)
 
 def insert_message(thread_id: int ,message: Message):
     if thread_length(thread_id) == 0:
-        collection.update_one({"thread_id": thread_id}, {"$push": {"list": {"id": 0,"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
+        collection.update_one({"thread_id": thread_id}, {"list_messages": {"list": {"id": 0,"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
     else:
-        collection.update_one({"thread_id": thread_id}, {"$push": {"list": {"id": thread_length(thread_id) + 1,"time": int(time.time()),"file":message.file, "message": message.message}}})
+        collection.update_one({"thread_id": thread_id}, {"list_messages": {"list": {"id": thread_length(thread_id) + 1,"time": int(time.time()),"file":message.file, "message": message.message}}})
 
 def thread_length(id: int):
     thread = collection.find_one({"thread_id": id})
@@ -42,7 +41,6 @@ def thread_length(id: int):
         return len(thread["list"])
 
 #insert_thread(Thread(thread_id=3, list_messages=[Message(id=0, message="Hello"), Message(id=1, message="World")]))
-
 
 
 #Partie API
@@ -74,7 +72,7 @@ def create_thread(thread: Thread):
     insert_thread(thread)
     return {"message": "Thread created"}
 
-@app.post("/thread/{id}/message")
+@app.post("/thread/{id}/newmessage")
 def post_message(id: int, message: Message):
     insert_message(id, message)
     return {"message": "Message inserted"}
