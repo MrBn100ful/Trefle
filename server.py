@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from  objects.datastructure import Thread, Message
 from database.dbmanager import insert_messagedb, insert_threaddb, get_threaddb, get_messagedb
 
-#Partie API
 app = FastAPI()
 
 @app.get("/thread/{thread_id}")
