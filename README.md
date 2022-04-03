@@ -1,4 +1,4 @@
-# Trefle : A modern imageboard engine
+# 🍀Trefle : A modern imageboard engine
 
 Trefle is build with python using FastAPI, pydantic and Mongodb.
 
