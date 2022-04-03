@@ -17,7 +17,7 @@ def insert_messagedb(thread_id: int ,message: Message):
     if get_threadlengthdb(thread_id) == -1:
         collection.update_one({"thread_id": thread_id}, {"$push": {"list_messages": {"message_id": 0,"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
     else:
-        collection.update_one({"thread_id": thread_id}, {"$push": {"list_messages": {"message_id": thread_length(thread_id),"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
+        collection.update_one({"thread_id": thread_id}, {"$push": {"list_messages": {"message_id": get_threadlengthdb(thread_id),"time" : int(time.time()) ,"file":message.file, "message": message.message}}})
 
 def get_threadlengthdb(thread_id: int):
     """this function is used to get the length of the thread in the database"""
